@@ -23,9 +23,13 @@ class Pose_pub:
             self.r.sleep()
 
 if __name__ == '__main__':
-    rospy.init_node('vr_controller')
-    pose_pub = Pose_pub()
-    time.sleep(0.1)
-    pose_pub.reset_pose()
-    pose_pub.ik()
-    rospy.spin()
+    try:
+        rospy.init_node('vr_controller')
+        pose_pub = Pose_pub()
+        time.sleep(0.1)
+        pose_pub.reset_pose()
+        pose_pub.ik()
+        rospy.spin()
+
+    except rospy.ROSIntteruptException:
+        pass
