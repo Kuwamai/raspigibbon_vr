@@ -3,11 +3,13 @@
 
 import rospy
 from geometry_msgs.msg import PoseStamped
+import numpy as np
 
 class Pose_pub:
     def __init__(self):
         self._sub_pos = rospy.Subscriber("controller_r", PoseStamped, self.pose_callback)
         self.reset_f = True
+        self.scale_fac = 0.1
 
     def pose_callback(self, message):
         self.pose = message.pose
@@ -24,7 +26,13 @@ class Pose_pub:
         self.zero_pose = self.pose
 
     def ik(self):
-        rospy.loginfo(self.pose.position.x - self.zero_pose.position.x)
+        r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x],
+                          [self.pose.position.y - self.zero_pose.position.y],
+                          [self.pose.position.z - self.zero_pose.position.z]])
+
+        rospy.loginfo(r_ref)
+        r_ref *= self.scale_fac
+        rospy.loginfo(r_ref)
 
 if __name__ == '__main__':
     try:
