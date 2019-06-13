@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import time
 import rospy
 from geometry_msgs.msg import PoseStamped
 
