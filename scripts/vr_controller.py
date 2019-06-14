@@ -3,11 +3,13 @@
 
 import rospy
 from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import JointState
 import numpy as np
 
 class Pose_pub:
     def __init__(self):
         self._sub_pos = rospy.Subscriber("controller_r", PoseStamped, self.pose_callback)
+        self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
         self.zero_pose = rospy.wait_for_message("controller_r", PoseStamped).pose
         self.r = rospy.Rate(10)
         self.scale_fac = 1.
@@ -40,8 +42,15 @@ class Pose_pub:
                 r = self.fk(self.q)
                 self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
 
+            self._q = self.q / np.pi
+            self._q *= 180
+
             rospy.loginfo(self.q.T)
             rospy.loginfo(r_ref - r)
+            js = JointState()
+            js.name=["joint{}".format(i) for i in range(1,6)]
+            js.position = [self._q[0,0], self._q[1,0], self._q[2,0], 0.0, 0.0, 0.0]
+            self.pub.publish(js)
             self.r.sleep()
 
     def trans_m(self, a, alpha, d, theta):
