@@ -11,10 +11,10 @@ class Pose_pub:
         self.zero_pose = rospy.wait_for_message("controller_r", PoseStamped).pose
         self.r = rospy.Rate(10)
         self.scale_fac = 1.
-        self.offset = 0.1
-        self.q = np.array([[0.0],
-                           [np.pi/4],
-                           [np.pi/2]])
+        self.offset = 0.5
+        self.q = np.array([[0.],
+                           [0.4],
+                           [-2.]])
 
     def pose_callback(self, message):
         self.pose = message.pose
@@ -22,7 +22,7 @@ class Pose_pub:
     def ik(self):
         while not rospy.is_shutdown():
             r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x + self.offset],
-                              [self.pose.position.y - self.zero_pose.position.y + self.offset],
+                              [self.pose.position.y - self.zero_pose.position.y],
                               [self.pose.position.z - self.zero_pose.position.z + self.offset]])
 
             #rospy.loginfo(r_ref)
