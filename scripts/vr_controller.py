@@ -53,7 +53,7 @@ class Pose_pub:
 
     def fk(self, theta):
         tm0_1 = self.trans_m(0, 0,       0, theta[0,0])
-        tm1_2 = self.trans_m(0, np.pi/2, 0, theta[1,0])
+        tm1_2 = self.trans_m(0, np.pi/2, 0, theta[1,0]+np.pi/2)
         tm2_3 = self.trans_m(1, 0,       0, theta[2,0])
         tm3_4 = self.trans_m(1, 0,       0, 0)
         pos = tm0_1.dot(tm1_2).dot(tm2_3).dot(tm3_4)[0:3,3:4]
