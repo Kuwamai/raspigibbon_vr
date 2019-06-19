@@ -10,10 +10,15 @@ class Pose_pub:
     def __init__(self):
         self._sub_pos = rospy.Subscriber("controller_r", PoseStamped, self.pose_callback)
         self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
+        
+        #コントローラの初期位置を取得
         self.zero_pose = rospy.wait_for_message("controller_r", PoseStamped).pose
         self.r = rospy.Rate(10)
+        #コントローラ位置のスケール
         self.scale_fac = 1.
+        #アーム手先位置のオフセット
         self.offset = 0.5
+        #逆運動学計算用初期値
         self.q = np.array([[0.],
                            [0.4],
                            [-2.]])
@@ -21,16 +26,18 @@ class Pose_pub:
     def pose_callback(self, message):
         self.pose = message.pose
 
+    #逆運動学計算
     def ik(self):
         while not rospy.is_shutdown():
+            #目標手先位置
             r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x + self.offset],
                               [self.pose.position.y - self.zero_pose.position.y],
                               [self.pose.position.z - self.zero_pose.position.z + self.offset]])
 
-            #rospy.loginfo(r_ref)
             r_ref *= self.scale_fac
             rospy.loginfo(r_ref)
 
+            #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
             r_ref_norm = np.linalg.norm(r_ref, ord=2)
             
             if r_ref_norm > 2.0:
@@ -38,18 +45,19 @@ class Pose_pub:
                 r_ref /= r_ref_norm
                 r_ref *= 1.99
 
+            #数値計算
             for i in range(10):
                 r = self.fk(self.q)
                 self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
 
-            self._q = self.q / np.pi
-            self._q *= 180
-
             rospy.loginfo(self.q.T)
             rospy.loginfo(r_ref - r)
+
+            q_deg = np.rad2deg(self.q)
+
             js = JointState()
             js.name=["joint{}".format(i) for i in range(1,6)]
-            js.position = [self._q[0,0], self._q[1,0], self._q[2,0], 0.0, 0.0, 0.0]
+            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, 0.0, 0.0]
             self.pub.publish(js)
             self.r.sleep()
 
