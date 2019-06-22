@@ -5,6 +5,7 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
 import numpy as np
+import time
 
 class Pose_pub:
     def __init__(self):
@@ -28,38 +29,36 @@ class Pose_pub:
 
     #逆運動学計算
     def ik(self):
-        while not rospy.is_shutdown():
-            #目標手先位置
-            r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x + self.offset],
-                              [self.pose.position.y - self.zero_pose.position.y],
-                              [self.pose.position.z - self.zero_pose.position.z + self.offset]])
+        #目標手先位置
+        r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x + self.offset],
+                          [self.pose.position.y - self.zero_pose.position.y],
+                          [self.pose.position.z - self.zero_pose.position.z + self.offset]])
 
-            r_ref *= self.scale_fac
-            rospy.loginfo(r_ref)
+        r_ref *= self.scale_fac
+        # rospy.loginfo(r_ref)
 
-            #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
-            r_ref_norm = np.linalg.norm(r_ref, ord=2)
-            
-            if r_ref_norm > 2.0:
-                rospy.loginfo("wawawa")
-                r_ref /= r_ref_norm
-                r_ref *= 1.99
+        #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
+        r_ref_norm = np.linalg.norm(r_ref, ord=2)
+        
+        if r_ref_norm > 2.0:
+            rospy.loginfo("wawawa")
+            r_ref /= r_ref_norm
+            r_ref *= 1.99
 
-            #数値計算
-            for i in range(10):
-                r = self.fk(self.q)
-                self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
+        #数値計算
+        for i in range(10):
+            r = self.fk(self.q)
+            self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
 
-            rospy.loginfo(self.q.T)
-            rospy.loginfo(r_ref - r)
+        # rospy.loginfo(self.q.T)
+        # rospy.loginfo(r_ref - r)
 
-            q_deg = np.rad2deg(self.q)
+        q_deg = np.rad2deg(self.q)
 
-            js = JointState()
-            js.name=["joint{}".format(i) for i in range(1,6)]
-            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, 0.0, 0.0]
-            self.pub.publish(js)
-            self.r.sleep()
+        js = JointState()
+        js.name=["joint{}".format(i) for i in range(1,6)]
+        js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, 0.0, 0.0]
+        return js
 
     def trans_m(self, a, alpha, d, theta):
         m = np.array([[np.cos(theta), -np.sin(theta), 0., a],
@@ -87,7 +86,13 @@ if __name__ == '__main__':
     try:
         rospy.init_node('vr_controller')
         pose_pub = Pose_pub()
-        pose_pub.ik()
+        while not rospy.is_shutdown():
+            start = time.time()
+            # pose_pub.ik()
+            pose_pub.pub.publish(pose_pub.ik())
+            elapsed_time = time.time() - start
+            rospy.loginfo("elapsed_time:{0}".format(elapsed_time) + "[sec]")
+            pose_pub.r.sleep()
         rospy.spin()
 
     except rospy.ROSInterruptException:
