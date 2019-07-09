@@ -18,10 +18,12 @@ class Pose_pub:
         self.scale_fac = 1.
         #アーム手先位置のオフセット
         self.offset = 0.5
+        #関節角最大速度
+        self.max_vel = 0.3
         #逆運動学計算用初期値
-        self.q = np.array([[0.],
-                           [0.4],
-                           [-2.]])
+        self.q = self.q_old = np.array([[0.],
+                                        [0.4],
+                                        [-2.]])
 
     def pose_callback(self, message):
         self.pose = message.pose
@@ -35,7 +37,7 @@ class Pose_pub:
                               [self.pose.position.z - self.zero_pose.position.z + self.offset]])
 
             r_ref *= self.scale_fac
-            rospy.loginfo(r_ref)
+            #rospy.loginfo(r_ref)
 
             #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
             r_ref_norm = np.linalg.norm(r_ref, ord=2)
@@ -50,11 +52,10 @@ class Pose_pub:
                 r = self.fk(self.q)
                 self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
 
-            rospy.loginfo(self.q.T)
-            rospy.loginfo(r_ref - r)
+            #rospy.loginfo(self.q.T)
+            #rospy.loginfo(r_ref - r)
 
             q_deg = np.rad2deg(self.q)
-
             js = JointState()
             js.name=["joint{}".format(i) for i in range(1,6)]
             js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, 0.0, 0.0]
@@ -85,6 +86,18 @@ class Pose_pub:
         diff_q2 = (self.fk(theta+np.array([[0.],[e],[0.]]))-self.fk(theta))/e
         diff_q3 = (self.fk(theta+np.array([[0.],[0.],[e]]))-self.fk(theta))/e
         return np.hstack((diff_q1, diff_q2, diff_q3))
+
+    def angular_vel_limit(self):
+        q_diff = self.q_old - self.q
+        q_diff_max = np.abs(q_diff).max()
+
+        if(q_max > self.max_vel):
+            rospy.loginfo("Too fast")
+            q_diff /= q_diff_max
+            q_diff *= self.max_vel
+            self.q += q_diff
+
+        self.q_old = self.q
 
 if __name__ == '__main__':
     try:
