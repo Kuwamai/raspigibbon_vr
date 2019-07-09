@@ -61,6 +61,7 @@ class Pose_pub:
             self.pub.publish(js)
             self.r.sleep()
 
+    #同次変換行列
     def trans_m(self, a, alpha, d, theta):
         m = np.array([[np.cos(theta), -np.sin(theta), 0., a],
             [np.cos(alpha)*np.sin(theta), np.cos(alpha)*np.cos(theta), -np.sin(alpha), -np.sin(alpha)*d],
@@ -68,6 +69,7 @@ class Pose_pub:
             [0., 0., 0., 1.]])
         return m
 
+    #順運動学
     def fk(self, theta):
         tm0_1 = self.trans_m(0, 0,       0, theta[0,0])
         tm1_2 = self.trans_m(0, np.pi/2, 0, theta[1,0]+np.pi/2)
@@ -76,6 +78,7 @@ class Pose_pub:
         pos = tm0_1.dot(tm1_2).dot(tm2_3).dot(tm3_4)[0:3,3:4]
         return pos
 
+    #ヤコビ行列
     def J(self, theta):
         e = 1.0e-10
         diff_q1 = (self.fk(theta+np.array([[e],[0.],[0.]]))-self.fk(theta))/e
