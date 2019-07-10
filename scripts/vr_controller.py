@@ -56,7 +56,7 @@ class Pose_pub:
             #rospy.loginfo(self.q.T)
             #rospy.loginfo(r_ref - r)
 
-            angular_vel_limit()
+            self.angular_vel_limit()
 
             q_deg = np.rad2deg(self.q)
             js = JointState()
@@ -95,7 +95,7 @@ class Pose_pub:
         q_diff = self.q_old - self.q
         q_diff_max = np.abs(q_diff).max()
 
-        if(q_max > self.max_vel):
+        if(q_diff_max > self.max_vel):
             rospy.loginfo("Too fast")
             q_diff /= q_diff_max
             q_diff *= self.max_vel
