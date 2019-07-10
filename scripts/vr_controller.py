@@ -36,6 +36,7 @@ class Pose_pub:
                               [self.pose.position.y - self.zero_pose.position.y],
                               [self.pose.position.z - self.zero_pose.position.z + self.offset]])
 
+            #コントローラ位置のスケール
             r_ref *= self.scale_fac
             #rospy.loginfo(r_ref)
 
