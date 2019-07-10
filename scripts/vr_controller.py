@@ -4,11 +4,13 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64
 import numpy as np
 
 class Pose_pub:
     def __init__(self):
         self._sub_pos = rospy.Subscriber("controller_r", PoseStamped, self.pose_callback)
+        self._sub_tri = rospy.Subscriber("trigger_r", Float64, self.trigger_callback)
         self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
         
         #コントローラの初期位置を取得
@@ -27,6 +29,9 @@ class Pose_pub:
 
     def pose_callback(self, message):
         self.pose = message.pose
+
+    def trigger_callback(self, message):
+        self.trigger = message.data
 
     #逆運動学計算
     def ik(self):
@@ -59,9 +64,11 @@ class Pose_pub:
             self.angular_vel_limit()
 
             q_deg = np.rad2deg(self.q)
+            grip  = self.trigger * 90.
+
             js = JointState()
             js.name=["joint{}".format(i) for i in range(1,6)]
-            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, 0.0, 0.0]
+            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, -grip, grip]
             self.pub.publish(js)
             self.r.sleep()
 
