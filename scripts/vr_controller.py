@@ -43,7 +43,7 @@ class Pose_pub:
             r_ref_norm = np.linalg.norm(r_ref, ord=2)
             
             if r_ref_norm > 2.0:
-                rospy.loginfo("wawawa")
+                rospy.loginfo("Out of movable range")
                 r_ref /= r_ref_norm
                 r_ref *= 1.99
 
@@ -54,6 +54,8 @@ class Pose_pub:
 
             #rospy.loginfo(self.q.T)
             #rospy.loginfo(r_ref - r)
+
+            angular_vel_limit()
 
             q_deg = np.rad2deg(self.q)
             js = JointState()
@@ -87,6 +89,7 @@ class Pose_pub:
         diff_q3 = (self.fk(theta+np.array([[0.],[0.],[e]]))-self.fk(theta))/e
         return np.hstack((diff_q1, diff_q2, diff_q3))
 
+    #角速度制限
     def angular_vel_limit(self):
         q_diff = self.q_old - self.q
         q_diff_max = np.abs(q_diff).max()
