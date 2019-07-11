@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import rospy
+import tf
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
@@ -65,10 +66,11 @@ class Pose_pub:
 
             q_deg = np.rad2deg(self.q)
             grip  = self.trigger * 90.
+            pitch = - self.calc_pitch_angle() - 90 - q_deg[1,0] - q_deg[2,0]
 
             js = JointState()
             js.name=["joint{}".format(i) for i in range(1,6)]
-            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], 0.0, -grip, grip]
+            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], pitch, -grip, grip]
             self.pub.publish(js)
             self.r.sleep()
 
@@ -109,6 +111,13 @@ class Pose_pub:
             self.q += q_diff
 
         self.q_old = self.q
+
+    #ピッチ角計算
+    def calc_pitch_angle(self):
+        quaternion = [self.pose.orientation.x,self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w]
+        euler = tf.transformations.euler_from_quaternion(quaternion, axes='rzyx')
+        euler = np.rad2deg(euler)
+        return euler[1]
 
 if __name__ == '__main__':
     try:
