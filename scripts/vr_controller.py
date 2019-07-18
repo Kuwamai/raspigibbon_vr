@@ -44,7 +44,6 @@ class Pose_pub:
 
             #コントローラ位置のスケール
             r_ref *= self.scale_fac
-            #rospy.loginfo(r_ref)
 
             #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
             r_ref_norm = np.linalg.norm(r_ref, ord=2)
@@ -58,9 +57,6 @@ class Pose_pub:
             for i in range(10):
                 r = self.fk(self.q)
                 self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
-
-            #rospy.loginfo(self.q.T)
-            #rospy.loginfo(r_ref - r)
 
             self.angular_vel_limit()
 
@@ -118,6 +114,9 @@ class Pose_pub:
         euler = tf.transformations.euler_from_quaternion(quaternion, axes='rzyx')
         euler = np.rad2deg(euler)
         return euler[1]
+
+    def singularity_avoidance(self):
+        
 
 if __name__ == '__main__':
     try:
