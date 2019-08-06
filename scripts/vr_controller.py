@@ -20,7 +20,9 @@ class Pose_pub:
         #コントローラ位置のスケール
         self.scale_fac = 1.
         #アーム手先位置のオフセット
-        self.offset = 0.5
+        self.r_offset = np.array([[0.5],
+                                  [0.],
+                                  [0.5]])
         #関節角最大速度
         self.max_vel = 0.3
         #逆運動学計算用初期値
@@ -38,29 +40,23 @@ class Pose_pub:
     def ik(self):
         while not rospy.is_shutdown():
             #目標手先位置
-            r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x + self.offset],
+            r_ref = np.array([[self.pose.position.x - self.zero_pose.position.x],
                               [self.pose.position.y - self.zero_pose.position.y],
-                              [self.pose.position.z - self.zero_pose.position.z + self.offset]])
+                              [self.pose.position.z - self.zero_pose.position.z]])
+            
+            #アーム手先位置のオフセット
+            r_ref += self.r_offset
 
             #コントローラ位置のスケール
             r_ref *= self.scale_fac
-            #rospy.loginfo(r_ref)
 
-            #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケールする
-            r_ref_norm = np.linalg.norm(r_ref, ord=2)
-            
-            if r_ref_norm > 2.0:
-                rospy.loginfo("Out of movable range")
-                r_ref /= r_ref_norm
-                r_ref *= 1.99
+            #特異姿勢回避
+            r_ref = self.singularity_avoidance(r_ref)
 
             #数値計算
             for i in range(10):
                 r = self.fk(self.q)
                 self.q = self.q - np.linalg.inv(self.J(self.q)).dot((r - r_ref))
-
-            #rospy.loginfo(self.q.T)
-            #rospy.loginfo(r_ref - r)
 
             self.angular_vel_limit()
 
@@ -118,6 +114,26 @@ class Pose_pub:
         euler = tf.transformations.euler_from_quaternion(quaternion, axes='rzyx')
         euler = np.rad2deg(euler)
         return euler[1]
+
+    #特異姿勢回避
+    def singularity_avoidance(self, r_ref):
+        #コントローラ位置がアームの可動範囲2を超えた際は1.9にスケール
+        r_ref_norm = np.linalg.norm(r_ref, ord=2)
+        
+        if r_ref_norm > 1.99:
+            rospy.loginfo("Out of movable range")
+            r_ref /= r_ref_norm
+            r_ref *= 1.99
+
+        #コントローラ位置がz軸上付近にある際はどける
+        r_ref_xy_norm = np.linalg.norm(r_ref[2:3], ord=2)
+
+        if r_ref_xy_norm < 0.01:
+            rospy.loginfo("Avoid singular configuration")
+            r_ref /= r_ref_xy_norm
+            r_ref *= 0.01
+
+        return r_ref
 
 if __name__ == '__main__':
     try:
