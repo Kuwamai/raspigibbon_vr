@@ -8,7 +8,7 @@ Raspberry Pi GibbonをHTC VIVEから動かすROSパッケージ
 * rvizの場合
   * `$ roslaunch raspigibbon_bringup rviz_joint_subscriber.launch`  
 
-## コントローラでアームの位置姿勢を同期
+## コントローラとアームの位置姿勢を同期
 `$ rosrun raspigibbon_vr vr_controller.py`
 
 ## HMDとカメラの姿勢を同期
