@@ -23,7 +23,7 @@ class Pose_pub:
         self.r_offset = np.array([[0.5],
                                   [0.],
                                   [0.5]])
-        #関節角最大速度
+        #最大関節角速度
         self.max_vel = 0.3
         #逆運動学計算用初期値
         self.q = self.q_old = np.array([[0.],
@@ -44,11 +44,11 @@ class Pose_pub:
                               [self.pose.position.y - self.zero_pose.position.y],
                               [self.pose.position.z - self.zero_pose.position.z]])
             
-            #アーム手先位置のオフセット
-            r_ref += self.r_offset
-
             #コントローラ位置のスケール
             r_ref *= self.scale_fac
+
+            #アーム手先位置のオフセット
+            r_ref += self.r_offset
 
             #特異姿勢回避
             r_ref = self.singularity_avoidance(r_ref)
@@ -97,14 +97,14 @@ class Pose_pub:
 
     #角速度制限
     def angular_vel_limit(self):
-        q_diff = self.q_old - self.q
+        q_diff = self.q - self.q_old
         q_diff_max = np.abs(q_diff).max()
 
         if(q_diff_max > self.max_vel):
             rospy.loginfo("Too fast")
             q_diff /= q_diff_max
             q_diff *= self.max_vel
-            self.q += q_diff
+            self.q_old += q_diff
 
         self.q_old = self.q
 
