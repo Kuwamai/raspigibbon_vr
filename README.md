@@ -3,10 +3,10 @@ Raspberry Pi GibbonをHTC VIVEから動かすROSパッケージ
 
 # Usage
 ## シミュレータの起動
-* GAZEBOの場合
-  * `$ roslaunch raspigibbon_gazebo raspigibbon_with_emptyworld.launch`  
-* rvizの場合
-  * `$ roslaunch raspigibbon_bringup rviz_joint_subscriber.launch`  
+* GAZEBOの場合  
+`$ roslaunch raspigibbon_gazebo raspigibbon_with_emptyworld.launch`  
+* rvizの場合  
+`$ roslaunch raspigibbon_bringup rviz_joint_subscriber.launch`  
 
 ## コントローラとアームの位置姿勢を同期
 `$ rosrun raspigibbon_vr vr_controller.py`
