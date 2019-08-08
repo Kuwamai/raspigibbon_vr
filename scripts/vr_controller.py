@@ -10,8 +10,9 @@ import numpy as np
 
 class Pose_pub:
     def __init__(self):
-        self._sub_pos = rospy.Subscriber("controller_r", PoseStamped, self.pose_callback)
-        self._sub_tri = rospy.Subscriber("trigger_r", Float64, self.trigger_callback)
+        arm_lr = rospy.get_param("arm_lr")
+        self._sub_pos = rospy.Subscriber("controller_" + arm_lr, PoseStamped, self.pose_callback)
+        self._sub_tri = rospy.Subscriber("trigger_" + arm_lr, Float64, self.trigger_callback)
         self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
         
         #コントローラの初期位置を取得
