@@ -67,7 +67,7 @@ class Pose_pub:
 
             js = JointState()
             js.name=["joint{}".format(i) for i in range(1,6)]
-            js.position = [q_deg[0,0], q_deg[1,0], q_deg[2,0], pitch, -grip, grip]
+            js.position = [-q_deg[0,0], q_deg[1,0], q_deg[2,0], pitch, -grip, grip]
             self.pub.publish(js)
             self.r.sleep()
 
