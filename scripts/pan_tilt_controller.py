@@ -10,8 +10,9 @@ import numpy as np
 
 class Pose_pub:
     def __init__(self):
+        arm_name = rospy.get_param("arm_name")
         self._sub_pos = rospy.Subscriber("head", PoseStamped, self.pose_callback)
-        self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
+        self.pub = rospy.Publisher("/" + arm_name + "/master_joint_state", JointState, queue_size=10)
         
         #コントローラの初期位置を取得
         self.zero_pose = rospy.wait_for_message("head", PoseStamped).pose
