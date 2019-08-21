@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="arm_lr" default="r"/>
-    <param name="arm_lr" value="$(arg arm_lr)"/> 
     <arg name="arm_name" default="raspigibbon"/>
-    <param name="arm_name" value="$(arg arm_name)"/> 
-    <node pkg="raspigibbon_vr" name="vr_controller" type="vr_controller.py" />
+    <arg name="arm_lr" default="r"/>
+
+    <group ns="$(arg arm_name)">
+        <param name="arm_lr" value="$(arg arm_lr)"/> 
+        <node pkg="raspigibbon_vr" name="vr_controller" type="vr_controller.py" />
+    </group>
 </launch>

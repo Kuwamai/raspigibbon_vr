@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="arm_name" default="raspigibbon"/>
-    <param name="arm_name" value="$(arg arm_name)"/> 
-    <node pkg="raspigibbon_vr" name="pan_tilt_controller" type="pan_tilt_controller.py" />
+
+    <group ns="$(arg arm_name)">
+        <node pkg="raspigibbon_vr" name="pan_tilt_controller" type="pan_tilt_controller.py" />
+    </group>
 </launch>
