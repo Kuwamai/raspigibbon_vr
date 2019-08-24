@@ -10,11 +10,11 @@ import numpy as np
 
 class Pose_pub:
     def __init__(self):
-        self._sub_pos = rospy.Subscriber("head", PoseStamped, self.pose_callback)
-        self.pub = rospy.Publisher("/raspigibbon/master_joint_state", JointState, queue_size=10)
+        self._sub_pos = rospy.Subscriber("/head", PoseStamped, self.pose_callback)
+        self.pub = rospy.Publisher("master_joint_state", JointState, queue_size=10)
         
         #コントローラの初期位置を取得
-        self.zero_pose = rospy.wait_for_message("head", PoseStamped).pose
+        self.zero_pose = rospy.wait_for_message("/head", PoseStamped).pose
         quaternion = [self.zero_pose.orientation.x, self.zero_pose.orientation.y, self.zero_pose.orientation.z, self.zero_pose.orientation.w]
         euler = tf.transformations.euler_from_quaternion(quaternion, axes='rzyx')
         self.zero_pan = euler[0]
