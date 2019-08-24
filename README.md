@@ -15,7 +15,7 @@ Raspberry Pi GibbonをHTC VIVEから動かすROSパッケージ
 `$ roslaunch raspigibbon_vr arm_controller.launch arm_lr:=l`  
 * 複数アームを動作させる場合  
 PublishするTopic名を変更できます  
-`$ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_r`  
+`$ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_r arm_lr:=l`  
 
 ## HMDとカメラの姿勢を同期
 `$ rosrun raspigibbon_vr pan_tilt_controller.py`
