@@ -18,13 +18,13 @@ class Pose_pub:
         
         #コントローラの初期位置を取得
         self.zero_pose = rospy.wait_for_message("/controller_" + arm_lr, PoseStamped).pose
-        self.r = rospy.Rate(10)
+        self.r = rospy.Rate(20)
         #コントローラ位置のスケール
-        self.scale_fac = 1.
+        self.scale_fac = 2.
         #アーム手先位置のオフセット
-        self.r_offset = np.array([[0.5],
+        self.r_offset = np.array([[0.7],
                                   [0.],
-                                  [0.5]])
+                                  [0.7]])
         #最大関節角速度
         self.max_vel = 0.3
         #逆運動学計算用初期値
