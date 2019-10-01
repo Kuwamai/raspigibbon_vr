@@ -23,7 +23,7 @@ PublishするTopic名を変更できます
 `$ rosrun raspigibbon_vr pan_tilt_controller.py`
 
 ## rosbagの再生
-* 動作確認用
+* 動作確認用  
 `$ rosbag play bagfiles/2018-11-27-03-01-54-trimmed.bag`  
 * HMDの動作確認は45秒後から  
 `$ rosbag play -s 45 bagfiles/2018-11-27-03-01-54-trimmed.bag`  
