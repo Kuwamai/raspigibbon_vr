@@ -27,19 +27,21 @@ $ source ~/catkin_ws/devel/setup.bash
 1. シミュレータ、または実機のRaspberry Pi Gibbonを起動させる
 1. 両手、頭部の位置姿勢をPublishさせる  
  例えば下記コマンドを実行し、このようなTopicがPublishされる状態にする
-```
-$ rostopic list -v
-Published topics:
- * /controller_l [geometry_msgs/PoseStamped] 1 publisher
- * /trigger_l [std_msgs/Float64] 1 publisher
- * /controller_r [geometry_msgs/PoseStamped] 1 publisher
- * /trigger_r [std_msgs/Float64] 1 publisher
- * /head [geometry_msgs/PoseStamped] 1 publisher
-```
+ 
+    ```
+    $ rostopic list -v
+    Published topics:
+     * /controller_l [geometry_msgs/PoseStamped] 1 publisher
+     * /trigger_l [std_msgs/Float64] 1 publisher
+     * /controller_r [geometry_msgs/PoseStamped] 1 publisher
+     * /trigger_r [std_msgs/Float64] 1 publisher
+     * /head [geometry_msgs/PoseStamped] 1 publisher
+    ```
+
 1. `/controller_r`と同期し、1台のアームのみを操作する場合は下記コマンド
-```
-$ roslaunch raspigibbon_vr arm_controller.launch
-```
+    ```
+    $ roslaunch raspigibbon_vr arm_controller.launch
+    ```
 1. 複数アームを動作させる場合はそれぞれのアームの下記ファイルを編集し、アームがSubscribeするTopic名を変更する
   [raspigibbon_ros/raspigibbon_bringup/launch/raspigibbon_joint_subscriber.launch](https://github.com/raspberrypigibbon/raspigibbon_ros/blob/kinetic-devel/raspigibbon_bringup/launch/raspigibbon_joint_subscriber.launch#L3)  
   `<group ns="raspigibbon">`→`<group ns="raspigibbon_r">`  
