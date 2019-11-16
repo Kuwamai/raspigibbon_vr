@@ -16,12 +16,12 @@
 ## Installation
 1. [raspigibbon_ros](https://github.com/raspberrypigibbon/raspigibbon_ros)をインストールする
 1. 本リポジトリをダウンロード、ビルドする
-```
-$ cd ~/catkin_ws/src
-$ git clone https://github.com/Kuwamai/raspigibbon_vr.git
-$ cd ~/catkin_ws && catkin_make
-$ source ~/catkin_ws/devel/setup.bash
-```
+    ```
+    $ cd ~/catkin_ws/src
+    $ git clone https://github.com/Kuwamai/raspigibbon_vr.git
+    $ cd ~/catkin_ws && catkin_make
+    $ source ~/catkin_ws/devel/setup.bash
+    ```
 
 ## Usage
 1. シミュレータ、または実機のRaspberry Pi Gibbonを起動させる
