@@ -48,11 +48,11 @@ $ source ~/catkin_ws/devel/setup.bash
   `<group ns="raspigibbon">`→`<group ns="raspigibbon_l">`  
   `<group ns="raspigibbon">`→`<group ns="raspigibbon_h">`
 1. 変更できたら下記コマンドを実行する
-```
-$ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_r arm_lr:=r
-$ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_l arm_lr:=l
-$ roslaunch raspigibbon_vr pan_tilt_controller.launch arm_name:=raspigibbon_h
-```
+    ```
+    $ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_r arm_lr:=r
+    $ roslaunch raspigibbon_vr arm_controller.launch arm_name:=raspigibbon_l arm_lr:=l
+    $ roslaunch raspigibbon_vr pan_tilt_controller.launch arm_name:=raspigibbon_h
+    ```
 
 ## Bagfiles
 * 下記コマンドで動作確認用のrosbagが再生される  
