@@ -61,4 +61,4 @@
 `$ rosbag play -s 45 bagfiles/2018-11-27-03-01-54-trimmed.bag`  
 
 ## License
-This repository is licensed under the BSD license, see [LICENSE](./LICENSE).
+This repository is licensed under the MIT license, see [LICENSE](./LICENSE).
