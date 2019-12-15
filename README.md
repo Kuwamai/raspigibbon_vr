@@ -62,3 +62,8 @@
 
 ## License
 This repository is licensed under the MIT license, see [LICENSE](./LICENSE).
+
+## Collaborators
+* [Tiryoh (Daisuke Sato)](https://github.com/Tiryoh)
+  * たくさんのアドバイスをいただいたり、記録映像の撮影を手伝っていただきました。ありがとうございます。
+* 工作機械、実験の場を提供してくださった研究室に感謝いたします。
