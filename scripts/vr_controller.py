@@ -106,7 +106,7 @@ class Pose_pub:
             rospy.loginfo("Too fast")
             q_diff /= q_diff_max
             q_diff *= self.max_vel
-            self.q_old += q_diff
+            self.q = self.q_old + q_diff
 
         self.q_old = self.q
 
@@ -128,12 +128,11 @@ class Pose_pub:
             r_ref *= 1.99
 
         #コントローラ位置がz軸上付近にある際はどける
-        r_ref_xy_norm = np.linalg.norm(r_ref[2:3], ord=2)
+        r_ref_xy_norm = np.linalg.norm(r_ref[0:2], ord=2)
 
         if r_ref_xy_norm < 0.01:
             rospy.loginfo("Avoid singular configuration")
-            r_ref /= r_ref_xy_norm
-            r_ref *= 0.01
+            r_ref = 0.01
 
         return r_ref
 
